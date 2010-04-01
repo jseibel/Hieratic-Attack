@@ -4,12 +4,13 @@ import pygame
 from pygame.locals import *
 from Field import Field
 from Typer import Typer
+from WaveMeter import WaveMeter
 
-class Level(object):
+class Resources(object):
 
     def __init__(self):
         #filename variables
-        #self.music_name = ''
+        self.music_name = ''
         self.map_name = ''
         self.level_image = ''
         #total enemy waves
@@ -25,7 +26,9 @@ class Level(object):
         self.sm_upgrade_d = 3
         self.lg_upgrade_d = 3
 
+        self.level = 1
 
+        self.game_state = 'start_menu'
         #reset all main variables
 
         #current user cursor (x,y)
@@ -52,7 +55,12 @@ class Level(object):
         #initialize typer
         self.typer = Typer('DICT/1',None,1,0,0)
         self.typer.kill()
-        
+
+
+        self.time = 0
+        self.typing_timer = 0
+
+        self.wave_meter = None
         
         #title screen images
         self.title1 = pygame.image.load('IMG/title1.png').convert()
@@ -83,6 +91,7 @@ class Level(object):
         self.grid = self.the_map.get_grid()
         self.towers = self.the_map.towers
         self.enemies = dict()
+        self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),number)
 
         #reset all main variables
         self.curr_x = 0
@@ -92,5 +101,23 @@ class Level(object):
         self.enemy = 0
         self.enemy_max = 0
         self.enemy_level = 0
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
