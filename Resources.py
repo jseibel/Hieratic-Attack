@@ -74,8 +74,8 @@ class Resources(object):
         self.help_screen = pygame.image.load('IMG/help.png').convert()
 
     #load a new level
-    def load(self,number):
-        source = file('LEVEL/' + str(number) + '.level')
+    def load(self):
+        source = file('LEVEL/' + str(self.level) + '.level')
         self.music_name = str('MUSIC/' + source.readline().rstrip())
         self.wave_max = int(source.readline())
         self.first_wave_time = int(source.readline())
@@ -86,17 +86,17 @@ class Resources(object):
         self.lg_upgrade_d = int(source.readline())
 
         #initialize map from newly loaded resources
-        self.the_map = Field('MAP/' + str(number) + '.map')
+        self.the_map = Field('MAP/' + str(self.level) + '.map')
         self.map_surface = self.the_map.get_map().convert()
         self.grid = self.the_map.get_grid()
         self.towers = self.the_map.towers
         self.enemies = dict()
-        self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),number)
+        self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.level)
 
         #reset all main variables
         self.curr_x = 0
         self.curr_y = 0
-        self.current_level = pygame.image.load('IMG/level_' + str(number) + '_100.png').convert_alpha() 
+        self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
         self.frame = 0
         self.enemy = 0
         self.enemy_max = 0

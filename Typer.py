@@ -100,7 +100,7 @@ class Typer(object):
             tower.skill_modifier(resources.typer.wrong,resources.typing_timer)
             resources.res-= 150
         elif resources.typer.type == 'upgrade':
-            current_tile = resources.grid[resorrrrurces.typer.y][resources.typer.x]
+            current_tile = resources.grid[resources.typer.y][resources.typer.x]
             current_tile.upgrade(resources.typer.wrong,resources.typing_timer)
             resources.res-= 80
         elif resources.typer.type == 'rapid':

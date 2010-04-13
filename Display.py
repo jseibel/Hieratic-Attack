@@ -8,6 +8,7 @@ class Display(object):
     #initialize display, pass it a pygame.display
     def __init__(self,screen):
         #initialize the background to screen size, convert, and fill with black
+        self.screen = screen
         self.background = pygame.Surface(screen.get_size())
         self.background.convert()
         self.background.fill((255, 255, 255))
@@ -71,6 +72,8 @@ class Display(object):
             if resources.typer.active:
                 type_sur = resources.typer.get_display(resources.typing_timer)
                 self.background.blit(type_sur, (resources.typer.x*30+15,resources.typer.y*30))
+            else:
+                pygame.mouse.set_visible(True)
                 
         elif resources.game_state == 'start_menu':
             if (resources.frame / 20) % 2 == 0:
@@ -80,4 +83,15 @@ class Display(object):
 
         elif resources.game_state == 'loading':
             self.background.blit(resources.loading,(0,0))
+
+        elif resources.game_state == 'help':
+            self.background.blit(resources.help_screen,(0,0))
+
+        elif resources.game_state == 'end_level':
+            self.background.blit(resources.level_finish, (0,0))
+
+        elif resources.game_state == 'end':
+            self.background.blit(resources.the_end, (0,0))
+
+        self.screen.blit(self.background,(0,0))
         
