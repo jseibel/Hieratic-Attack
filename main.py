@@ -7,7 +7,7 @@ from sys import exit
 from Display import Display
 from Enemy import Enemy
 from Typer import Typer
-from Resources import Resources
+from Game import Game
 import math
 from Controller import *
 
@@ -31,12 +31,12 @@ pygame.key.set_repeat(200,75)
 #display object
 game_display = Display(screen)
 #resource object
-resources = Resources()
+m_game = Game()
 
 
 #clock object for movement, (currently limited to 40 fps)
 clock = pygame.time.Clock()
-resources.time = clock.tick(40)
+m_game.time = clock.tick(40)
 
 
 #computes distance between two points
@@ -48,111 +48,107 @@ def dist(a,b):
 
 #main game loop
 while True:
-    if resources.game_state == 'loading':
+    if m_game.game_state == 'loading':
         #game is over
-        if resources.level == 9:
-            resources.game_state = 'end'
+        if m_game.level == 9:
+            m_game.game_state = 'end'
         #load next level
         else:
-            #load resources for the current resources.level
-            resources.load()
+            #load next level
+            m_game.LoadNextLevel()
             
             #play music
-            music = pygame.mixer.Sound(resources.music_name)
+            music = pygame.mixer.Sound(m_game.music_name)
             music.play(-1)
             
             #reset timer
             clock = pygame.time.Clock()
-            resources.time = clock.tick(40)
+            m_game.time = clock.tick(40)
             
             
             #return to main game look
-            resources.game_state = 'main'
+            m_game.game_state = 'main'
 
 
     for event in pygame.event.get():
-        handle(event,resources)
+        handle(event,m_game)
 
-    if resources.game_state == 'main':
+    if m_game.game_state == 'main':
 
-        if resources.typer.active:
-            resources.typing_timer+= resources.time
+        if m_game.typer.active:
+            m_game.typing_timer+= m_game.time
         
         
         #adds a resource every second
-        if (resources.frame % 40) == 0:
-            resources.res+= 1
+        if (m_game.frame % 40) == 0:
+            m_game.res+= 1
         
             
     #TODO - move all enemy creation garbage out of main
-        #sends a new enemy (if not at max) every 0.5 second
-        if (resources.frame%20) == 0 and resources.enemy < resources.enemy_max :
-            resources.enemies[resources.enemy] = Enemy(resources.enemy_level, resources.the_map.path, resources.level)
-            resources.enemy+= 1
+        
         
         #special speed waves
-        if resources.level == 7:
-            if (resources.frame % resources.wave_time) == 0:
-                resources.enemy_max+=1
-                resources.enemy_level+=1
-                resources.frame = 0
-        elif (resources.enemy_level == 0):
-            if resources.frame % resources.first_wave_time == 0:
-                resources.enemy_max+= 10
-                resources.enemy_level+= 1
-                resources.frame = 0
-        elif resources.level == 4 and resources.enemy_level == 15:
-            if (resources.frame % resources.wave_time) == 0:
-                resources.enemy_max+=1
-                resources.enemy_level+=1
-                resources.frame = 0
-        elif resources.level == 8 and resources.enemy_level == 25:
-            if (resources.frame % resources.wave_time) == 0:
-                resources.enemy_max+=1
-                resources.enemy_level+=1
-                resources.frame = 0
-        elif (resources.frame % resources.wave_time) == 0 and resources.enemy_level < resources.wave_max:
-            resources.enemy_max+= 10
-            resources.enemy_level+= 1
-            resources.frame = 0
+        if m_game.level == 7:
+            if (m_game.frame % m_game.wave_time) == 0:
+                m_game.enemy_max+=1
+                m_game.enemy_level+=1
+                m_game.frame = 0
+        elif (m_game.enemy_level == 0):
+            if m_game.frame % m_game.first_wave_time == 0:
+                m_game.enemy_max+= 10
+                m_game.enemy_level+= 1
+                m_game.frame = 0
+        elif m_game.level == 4 and m_game.enemy_level == 15:
+            if (m_game.frame % m_game.wave_time) == 0:
+                m_game.enemy_max+=1
+                m_game.enemy_level+=1
+                m_game.frame = 0
+        elif m_game.level == 8 and m_game.enemy_level == 25:
+            if (m_game.frame % m_game.wave_time) == 0:
+                m_game.enemy_max+=1
+                m_game.enemy_level+=1
+                m_game.frame = 0
+        elif (m_game.frame % m_game.wave_time) == 0 and m_game.enemy_level < m_game.wave_max:
+            m_game.enemy_max+= 10
+            m_game.enemy_level+= 1
+            m_game.frame = 0
         
         #all towers within range of enemy fire at first available
-        for i in resources.towers:
-            for j in resources.enemies:
-                if resources.enemies[j].alive:
-                    if dist(resources.towers[i].center,resources.enemies[j].loc) <= resources.towers[i].range and resources.towers[i].cool <= 0:
-                        resources.towers[i].fire(resources.enemies[j],resources.enemies,j)
-                        if resources.enemies[j].hp <= 0:
-                            resources.enemies[j].alive = False
-                            resources.res+= resources.enemies[j].reward
+        for i in m_game.towers:
+            for j in m_game.enemies:
+                if m_game.enemies[j].alive:
+                    if dist(m_game.towers[i].center,m_game.enemies[j].loc) <= m_game.towers[i].range and m_game.towers[i].cool <= 0:
+                        m_game.towers[i].fire(m_game.enemies[j],m_game.enemies,j)
+                        if m_game.enemies[j].hp <= 0:
+                            m_game.enemies[j].alive = False
+                            m_game.res+= m_game.enemies[j].reward
 
         #update dams on the map
-        resources.the_map.update_dams(resources.time)
+        m_game.the_map.update_dams(m_game.time)
         
         #kills all enemies that reach the end
         num_alive = 0
-        for i in resources.enemies:
-            if resources.enemies[i].tile.kind == 'home base':
-                resources.enemies[i].alive = False
+        for i in m_game.enemies:
+            if m_game.enemies[i].tile.kind == 'home base':
+                m_game.enemies[i].alive = False
                 game = False
                 end = True
                 
-            elif resources.enemies[i].alive:
-                resources.enemies[i].move(resources.time)
+            elif m_game.enemies[i].alive:
+                m_game.enemies[i].move(m_game.time)
                 num_alive+= 1
 
         #determine if level is complete and load next level
-        if (num_alive == 0) and resources.enemy_level == resources.wave_max:
-            resources.game_state = 'end_level'
-            resources.level+=1
+        if (num_alive == 0) and m_game.enemy_level == m_game.wave_max:
+            m_game.game_state = 'end_level'
+            m_game.level+=1
             pygame.mixer.stop()
 
     #find time passed since last frame (maxing at 40 fps)
-    resources.time = clock.tick(40)/1000.0
-    resources.frame+= 1
+    m_game.Update( (clock.tick(40)/1000.0) )
     
     #update screen
-    game_display.update_view(resources)
+    game_display.update_view(m_game)
     #draw updated screen
     pygame.display.flip()
 
