@@ -85,32 +85,36 @@ class Game(object):
     #load a new level
     def LoadNextLevel(self):
         self.level += 1
-        source = file('LEVEL/' + str(self.level) + '.level')
-        self.music_name = str('MUSIC/' + source.readline().rstrip())
-        self.wave_max = int(source.readline())
-        self.first_wave_time = int(source.readline())
-        self.wave_time = int(source.readline())
-        self.res = int(source.readline())
-        self.tower_d = int(source.readline())
-        self.sm_upgrade_d = int(source.readline())
-        self.lg_upgrade_d = int(source.readline())
+        if self.level < 9:
+            source = file('LEVEL/' + str(self.level) + '.level')
+            self.music_name = str('MUSIC/' + source.readline().rstrip())
+            self.wave_max = int(source.readline())
+            self.first_wave_time = int(source.readline())
+            self.wave_time = int(source.readline())
+            self.res = int(source.readline())
+            self.tower_d = int(source.readline())
+            self.sm_upgrade_d = int(source.readline())
+            self.lg_upgrade_d = int(source.readline())
 
-        #initialize map from newly loaded resources
-        self.the_map = Field('MAP/' + str(self.level) + '.map')
-        self.map_surface = self.the_map.get_map().convert()
-        self.grid = self.the_map.get_grid()
-        self.towers = self.the_map.towers
-        self.enemies = dict()
-        self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.level)
+            #initialize map from newly loaded resources
+            self.the_map = Field('MAP/' + str(self.level) + '.map')
+            self.map_surface = self.the_map.get_map().convert()
+            self.grid = self.the_map.get_grid()
+            self.towers = self.the_map.towers
+            self.enemies = dict()
+            self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.level)
 
-        #reset all main variables
-        self.curr_x = 0
-        self.curr_y = 0
-        self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
-        self.frame = 0
-        self.enemy_sent = 0
-        self.enemy_max = 0
-        self.enemy_level = 0
+            #reset all main variables
+            self.curr_x = 0
+            self.curr_y = 0
+            self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
+            self.frame = 0
+            self.enemy_sent = 0
+            self.enemy_max = 0
+            self.enemy_level = 0
+            
+        else:
+            self.game_state = 'end'
 
 
     def Update(self,time):
@@ -132,6 +136,7 @@ class Game(object):
                 self.enemies[self.enemy_sent] = Enemy(self.enemy_level, self.the_map.path, self.level)
                 self.enemy_sent+= 1
             
+            #adds another wave of enemies to be sent if time == wave_time
             if (self.frame % self.wave_time) == 0 and self.enemy_level < self.wave_max:
                 self.enemy_max+= 10
                 self.enemy_level+= 1
@@ -161,7 +166,16 @@ class Game(object):
             if all_dead and self.enemy_level == self.wave_max:
                 self.game_state = 'end_level'
         
-        
+        if self.game_state == 'loading':
+            #stop music
+            pygame.mixer.stop()
+            #load next level
+            self.LoadNextLevel()
+            #if game is not over play new music
+            if self.game_state != 'end':
+                music = pygame.mixer.Sound(self.music_name)
+                music.play(-1)
+                self.game_state = 'main'
         
         
 
