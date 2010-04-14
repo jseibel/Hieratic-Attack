@@ -4,7 +4,16 @@ import pygame
 from pygame.locals import *
 from Field import Field
 from Typer import Typer
+from Enemy import Enemy
 from WaveMeter import WaveMeter
+import math
+
+#computes distance between two points
+#   input pixel location tuple for two objects
+def dist(a,b):
+    x = abs(a[0]-b[0])
+    y = abs(a[1]-b[1])
+    return math.sqrt( x**2 + y**2 )
 
 class Game(object):
 
@@ -102,19 +111,59 @@ class Game(object):
         self.enemy_sent = 0
         self.enemy_max = 0
         self.enemy_level = 0
-            
 
 
     def Update(self,time):
         self.time = time
         self.frame+= 1
-        #sends a new enemy (if not at max) every 0.5 second
-        if (self.frame%20) == 0 and self.enemy_sent < self.enemy_max :
-            self.enemies[self.enemy_sent] = Enemy(self.enemy_level, self.the_map.path, self.level)
-            self.enemy_sent+= 1
+        
+        if self.game_state == 'main':
+        
+            #update typing time if active
+            if self.typer.active:
+                self.typing_timer+= self.time
+                
+            #adds a resource every second
+            if (self.frame % 40) == 0:
+                self.res+= 1
+            
+            #sends a new enemy (if not at max) every 0.5 second
+            if (self.frame%20) == 0 and self.enemy_sent < self.enemy_max :
+                self.enemies[self.enemy_sent] = Enemy(self.enemy_level, self.the_map.path, self.level)
+                self.enemy_sent+= 1
+            
+            if (self.frame % self.wave_time) == 0 and self.enemy_level < self.wave_max:
+                self.enemy_max+= 10
+                self.enemy_level+= 1
+                self.frame = 0
+            
+            #all towers within range of enemy fire at first available
+            all_dead = True
+            for j in self.enemies:
+                if self.enemies[j].alive:
+                    all_dead = False
+                    self.enemies[j].move(self.time)
+                    for i in self.towers:
+                        if dist(self.towers[i].center,self.enemies[j].loc) <= self.towers[i].range and self.towers[i].cool <= 0:
+                            self.towers[i].fire(self.enemies[j],self.enemies,j)
+                            if self.enemies[j].hp <= 0:
+                                self.enemies[j].alive = False
+                                self.res+= self.enemies[j].reward
+                
+                #if enemy has reached home base, end game
+                if self.enemies[j].tile.kind == 'home base':
+                    self.game_state = 'end'
 
-
-
+            #update dams on the map
+            self.the_map.update_dams(self.time)
+            
+            #if everything is dead and all waves sent, end level
+            if all_dead and self.enemy_level == self.wave_max:
+                self.game_state = 'end_level'
+        
+        
+        
+        
 
 
 
