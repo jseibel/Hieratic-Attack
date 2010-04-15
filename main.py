@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 from Display import Display
 from Game import Game
-from Controller import *
+from Controller import Controller
 
 #initialize pygame and display
 pygame.init()
@@ -23,6 +23,8 @@ m_display = Display(screen)
 #game object
 m_game = Game()
 
+#controller object
+m_controller = Controller()
 
 #clock object for time-based
 clock = pygame.time.Clock()
@@ -32,13 +34,13 @@ while True:
     
     #send all events to controller
     for event in pygame.event.get():
-        handle(event,m_game)
+        m_controller.handle(event,m_game)
         
     #update game logic but limit to 40 FPS
     m_game.Update( (clock.tick(40)/1000.0) )
     
     #update screen
-    m_display.update_view(m_game)
+    m_display.update_view(m_game,m_controller)
     
     #display new screen to user
     pygame.display.flip()

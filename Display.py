@@ -24,21 +24,21 @@ class Display(object):
         self.background.blit(self.font.render(text,True,(255,255,255)), (616,y_height))
 
     #redraw the screen
-    def update_view(self,resources):
-        if resources.game_state == 'main':
+    def update_view(self,game_data,controller):
+        if game_data.game_state == 'main':
             #clear background and add panel
             self.background.fill((255,255,255))
             self.background.blit(self.panel,(615,0))
             #update towers on cooldownrapid
-            resources.the_map.update_towers(resources.time)
+            game_data.the_map.update_towers(game_data.time)
             #get the newest map
-            map_surface = resources.the_map.get_map().convert()
+            map_surface = game_data.the_map.get_map().convert()
             self.background.blit(map_surface, (15,0))
-            meter_surface = resources.meter.getMeter(resources.time,resources.enemy_level)
+            meter_surface = game_data.meter.getMeter(game_data.time,game_data.enemy_level)
             self.background.blit(meter_surface,(0,0))
-            curr_tile = resources.grid[resources.curr_y][resources.curr_x]
+            curr_tile = game_data.grid[controller.curr_y][controller.curr_x]
             #draws a rectangle around current tile
-            pygame.draw.rect(self.background, (255,255,255), ((resources.curr_x*30+15,resources.curr_y*30),(29,29)), 2)
+            pygame.draw.rect(self.background, (255,255,255), ((controller.curr_x*30+15,controller.curr_y*30),(29,29)), 2)
 
             #displays firing radius around tower as well as all info on the sidebar
             if curr_tile.kind == 'tower':
@@ -50,14 +50,13 @@ class Display(object):
                     info_y+= self.font_height
 
 
-            self.background.blit(resources.current_level, (700,0))
-            self.background.blit(resources.res_img, (616,75))
-            #print messages on sidebar
-            text_y = 75
+            self.background.blit(game_data.current_level, (700,0))
+            self.background.blit(game_data.res_img, (616,75))
+            
             #display current resource count
-            text = " x " + str(int(resources.res))
+            text = " x " + str(int(game_data.res))
             self.background.blit(self.font.render(text,True,(255,255,255)), (680,100))
-            text = 'Wave: ' + str(resources.enemy_level) + "/" + str(resources.wave_max)
+            text = 'Wave: ' + str(game_data.enemy_level) + "/" + str(game_data.wave_max)
             self.background.blit(self.font.render(text,True,(255,255,255)), (616,35))
 
             text = 'Press (H) for instructions'
@@ -65,33 +64,33 @@ class Display(object):
 
 
             #draw in all living enemies
-            for i in resources.enemies:
-                if resources.enemies[i].alive:
-                    self.background.blit(resources.enemies[i].pic, resources.enemies[i].draw_coords())
+            for i in game_data.enemies:
+                if game_data.enemies[i].alive:
+                    self.background.blit(game_data.enemies[i].pic, game_data.enemies[i].draw_coords())
             #draw the typing window (if necessary)
-            if resources.typer.active:
-                type_sur = resources.typer.get_display(resources.typing_timer)
-                self.background.blit(type_sur, (resources.typer.x*30+15,resources.typer.y*30))
+            if game_data.typer.active:
+                type_sur = game_data.typer.get_display(game_data.typing_timer)
+                self.background.blit(type_sur, (game_data.typer.x*30+15,game_data.typer.y*30))
             else:
                 pygame.mouse.set_visible(True)
                 
-        elif resources.game_state == 'start_menu':
-            if (resources.frame / 20) % 2 == 0:
-                self.background.blit(resources.title1,(0,0))
+        elif game_data.game_state == 'start_menu':
+            if (game_data.frame / 20) % 2 == 0:
+                self.background.blit(game_data.title1,(0,0))
             else:
-                self.background.blit(resources.title2,(0,0))
+                self.background.blit(game_data.title2,(0,0))
 
-        elif resources.game_state == 'loading':
-            self.background.blit(resources.loading,(0,0))
+        elif game_data.game_state == 'loading':
+            self.background.blit(game_data.loading,(0,0))
 
-        elif resources.game_state == 'help':
-            self.background.blit(resources.help_screen,(0,0))
+        elif game_data.game_state == 'help':
+            self.background.blit(game_data.help_screen,(0,0))
 
-        elif resources.game_state == 'end_level':
-            self.background.blit(resources.level_finish, (0,0))
+        elif game_data.game_state == 'end_level':
+            self.background.blit(game_data.level_finish, (0,0))
 
-        elif resources.game_state == 'end':
-            self.background.blit(resources.the_end, (0,0))
+        elif game_data.game_state == 'end':
+            self.background.blit(game_data.the_end, (0,0))
 
         self.screen.blit(self.background,(0,0))
         

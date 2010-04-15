@@ -38,11 +38,7 @@ class Game(object):
         self.level = 0
 
         self.game_state = 'start_menu'
-        #reset all main variables
-
-        #current user cursor (x,y)
-        self.curr_x = 0
-        self.curr_y = 0
+        
         #display frame counter
         self.frame = 0
         #total number of enemies sent
@@ -105,8 +101,6 @@ class Game(object):
             self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.level)
 
             #reset all main variables
-            self.curr_x = 0
-            self.curr_y = 0
             self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
             self.frame = 0
             self.enemy_sent = 0
@@ -178,7 +172,8 @@ class Game(object):
                 self.game_state = 'main'
         
         
-
+    #def ActivateTyper(self,x,y,typer_type):
+        
 
 
 
