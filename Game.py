@@ -28,12 +28,13 @@ class Game(object):
         self.first_wave_time = 0
         #time between waves after first
         self.wave_time = 0
-        #starting player resources
+        #starting player self
         self.start_res = 0
         #letter length for words in typer
         self.basic_tower_d = 3
         self.adv_tower_d = 3
         self.upgrade_d = 3
+        self.enemy_wave_description = list()
 
         self.level = 0
 
@@ -91,8 +92,22 @@ class Game(object):
             self.upgrade_d = int(source.readline())
             self.basic_tower_d = int(source.readline())
             self.adv_tower_d = int(source.readline())
+            i = 0
+            line = source.readline()
+            line = line.split()
+            num_waves = int(line[0])
+            wave_type = line[1]
+            while (i < self.wave_max):
+                if i == num_waves:
+                    line = source.readline()
+                    line = line.split()
+                    num_waves = int(line[0])
+                    wave_type = line[1]
+                self.enemy_wave_description.append(wave_type)
+                i += 1
+                    
 
-            #initialize map from newly loaded resources
+            #initialize map from newly loaded self
             self.the_map = Field('MAP/' + str(self.level) + '.map')
             self.map_surface = self.the_map.get_map().convert()
             self.grid = self.the_map.get_grid()
@@ -127,7 +142,7 @@ class Game(object):
             
             #sends a new enemy (if not at max) every 0.5 second
             if (self.frame%20) == 0 and self.enemy_sent < self.enemy_max :
-                self.enemies[self.enemy_sent] = Enemy(self.enemy_level, self.the_map.path, self.level)
+                self.enemies[self.enemy_sent] = Enemy(self.enemy_wave_description[self.enemy_level],self.enemy_level, self.the_map.path, self.level)
                 self.enemy_sent+= 1
             
             #adds another wave of enemies to be sent if time == wave_time
@@ -207,10 +222,32 @@ class Game(object):
         
 
 
+    #execute on completion of a typing challenge
+    def TypeComplete(self):
+        if self.typer.type == 'tower':
+            self.the_map.add_tower(self.typer.y,self.typer.x)
+            tower = self.grid[self.typer.y][self.typer.x]
+            tower.skill_modifier(self.typer.wrong,self.typing_timer)
+            self.res-= 150
+        elif self.typer.type == 'upgrade':
+            current_tile = self.grid[self.typer.y][self.typer.x]
+            current_tile.upgrade(self.typer.wrong,self.typing_timer)
+            self.res-= 80
+        elif self.typer.type == 'rapid':
+            tower = self.grid[self.typer.y][self.typer.x]
+            tower.rapid_upgrade(self.typer.wrong,self.typing_timer)
+            self.res-= 300
+        elif self.typer.type == 'snipe':
+            tower = self.grid[self.typer.y][self.typer.x]
+            tower.snipe_upgrade(self.typer.wrong,self.typing_timer)
+            self.res-= 500
+        elif self.typer.type == 'dam':
+            self.the_map.add_dam(self.typer.y,self.typer.x)
+            self.res-= 50
 
 
-
-
+    def KillTyper(self):
+        self.typer.kill()
 
 
 

@@ -33,9 +33,9 @@ class Controller(object):
                     if event.key == K_SPACE:
                         key = ' '
                     if game_data.typer.put(key):
-                        game_data.typer.type_complete(game_data)
+                        game_data.TypeComplete()
                     if event.key == K_ESCAPE:
-                        game_data.typer.kill()
+                        game_data.KillTyper()
             elif event.type == KEYDOWN:
                 #move selected square with WASD or arrow keys
                 if (event.key == K_DOWN or event.key == K_s) and self.curr_y < 19:

@@ -92,27 +92,6 @@ class Typer(object):
         self.active = False
         
         
-    #execute on completion of a typing challenge
-    def type_complete(self,resources):
-        if resources.typer.type == 'tower':
-            resources.the_map.add_tower(resources.typer.y,resources.typer.x)
-            tower = resources.grid[resources.typer.y][resources.typer.x]
-            tower.skill_modifier(resources.typer.wrong,resources.typing_timer)
-            resources.res-= 150
-        elif resources.typer.type == 'upgrade':
-            current_tile = resources.grid[resources.typer.y][resources.typer.x]
-            current_tile.upgrade(resources.typer.wrong,resources.typing_timer)
-            resources.res-= 80
-        elif resources.typer.type == 'rapid':
-            tower = resources.grid[resources.typer.y][resources.typer.x]
-            tower.rapid_upgrade(resources.typer.wrong,resources.typing_timer)
-            resources.res-= 300
-        elif resources.typer.type == 'snipe':
-            tower = resources.grid[resources.typer.y][resources.typer.x]
-            tower.snipe_upgrade(resources.typer.wrong,resources.typing_timer)
-            resources.res-= 500
-        elif resources.typer.type == 'dam':
-            resources.the_map.add_dam(resources.typer.y,resources.typer.x)
-            resources.res-= 50
+    
 
             
