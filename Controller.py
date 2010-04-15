@@ -49,51 +49,24 @@ class Controller(object):
                 
                 #upgrade a tower at current location
                 if event.key == K_u:
-                    #game_data.ActivateTyper(self.curr_x,self.curr_y,'upgrade')
+                    game_data.ActivateTyper(self.curr_x,self.curr_y,'upgrade')
                     
-                    if game_data.res >= 80:
-                        current_tile = game_data.grid[self.curr_y][self.curr_x]
-                        if (current_tile.kind == 'tower' and current_tile.upgrades < 10):
-                            pygame.mouse.set_visible(False)
-                            game_data.typer = Typer('DICT/1','upgrade',1,self.curr_y, self.curr_x)
-                            game_data.typing_timer = -1
-                
                 #builds a tower at current location
                 if event.key == K_r:
-                    if game_data.res >= 150:
-                        if (game_data.grid[self.curr_y][self.curr_x].kind == 'grass'):
-                            pygame.mouse.set_visible(False)
-                            game_data.typer = Typer('DICT/1','tower',2,self.curr_y, self.curr_x)
-                            game_data.typing_timer = -1
-                
+                    game_data.ActivateTyper(self.curr_x,self.curr_y,'tower')
+                    
                 #upgrade tower to rapid-fire 
                 if event.key == K_t:
-                    if game_data.res >= 300:
-                        current_tile = game_data.grid[self.curr_y][self.curr_x]
-                        if (current_tile.kind == 'tower'):
-                            if current_tile.title == 'Basic Tower':
-                                pygame.mouse.set_visible(False)
-                                game_data.typer = Typer('DICT/1','rapid',3,self.curr_y,self.curr_x)
-                                game_data.typing_timer = -1
-                
+                    game_data.ActivateTyper(self.curr_x,self.curr_y,'rapid')
+                    
                 #upgrade tower to sniper
                 if event.key == K_y:
-                    if game_data.res >= 500:
-                        current_tile = game_data.grid[self.curr_y][self.curr_x]
-                        if (current_tile.kind == 'tower'):
-                            if current_tile.title == 'Basic Tower':
-                                pygame.mouse.set_visible(False)
-                                game_data.typer = Typer('DICT/1','snipe',3,self.curr_y,self.curr_x)
-                                game_data.typing_timer = -1
-                
+                    game_data.ActivateTyper(self.curr_x,self.curr_y,'snipe')
+                    
                 #build a dam
                 if event.key == K_e:
-                    if game_data.res >= 50:
-                        current_tile = game_data.grid[self.curr_y][self.curr_x]
-                        if (current_tile.kind == 'road'):
-                            pygame.mouse.set_visible(False)
-                            game_data.typer = Typer('DICT/1','dam',1,self.curr_y,self.curr_x)     
-                            game_data.typing_timer = -1
+                    game_data.ActivateTyper(self.curr_x,self.curr_y,'dam')
+                    
                 #show help menu    
                 if event.key == K_h:
                     game_data.game_state = 'help_menu'

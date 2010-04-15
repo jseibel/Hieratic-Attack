@@ -10,7 +10,7 @@ import os
 
 class Typer(object):
 
-    def __init__(self,filename,use,num,y,x):
+    def __init__(self,word_length,use,num,y,x):
         #define font
         self.font = pygame.font.SysFont('arial',16)
         self.font_height = self.font.get_linesize()
@@ -29,7 +29,7 @@ class Typer(object):
         while i < self.num:
             temp = ''
             while( len(temp) <= 1 ):
-                temp = self.get_word(filename)
+                temp = self.get_word(('DICT/'+str(word_length)))
             temp = temp.strip()
             if i > 0:
                 self.word = temp + ' ' + self.word
@@ -92,7 +92,7 @@ class Typer(object):
         self.active = False
         
         
-        #execute on completion of a typing challenge
+    #execute on completion of a typing challenge
     def type_complete(self,resources):
         if resources.typer.type == 'tower':
             resources.the_map.add_tower(resources.typer.y,resources.typer.x)

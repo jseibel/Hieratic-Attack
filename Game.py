@@ -31,9 +31,9 @@ class Game(object):
         #starting player resources
         self.start_res = 0
         #letter length for words in typer
-        self.tower_d = 3
-        self.sm_upgrade_d = 3
-        self.lg_upgrade_d = 3
+        self.basic_tower_d = 3
+        self.adv_tower_d = 3
+        self.upgrade_d = 3
 
         self.level = 0
 
@@ -58,7 +58,7 @@ class Game(object):
         self.enemies = dict()
 
         #initialize typer
-        self.typer = Typer('DICT/1',None,1,0,0)
+        self.typer = Typer(3,None,1,0,0)
         self.typer.kill()
 
 
@@ -88,9 +88,9 @@ class Game(object):
             self.first_wave_time = int(source.readline())
             self.wave_time = int(source.readline())
             self.res = int(source.readline())
-            self.tower_d = int(source.readline())
-            self.sm_upgrade_d = int(source.readline())
-            self.lg_upgrade_d = int(source.readline())
+            self.upgrade_d = int(source.readline())
+            self.basic_tower_d = int(source.readline())
+            self.adv_tower_d = int(source.readline())
 
             #initialize map from newly loaded resources
             self.the_map = Field('MAP/' + str(self.level) + '.map')
@@ -172,7 +172,38 @@ class Game(object):
                 self.game_state = 'main'
         
         
-    #def ActivateTyper(self,x,y,typer_type):
+    def ActivateTyper(self,x,y,typer_type):
+        if typer_type == 'upgrade' and self.res >= 80:
+            current_tile = self.grid[y][x]
+            if (current_tile.kind == 'tower' and current_tile.upgrades < 10):
+                pygame.mouse.set_visible(False)
+                self.typer = Typer(self.upgrade_d,'upgrade',1,y,x)
+                self.typing_timer = -1
+        elif typer_type == 'tower' and self.res >= 150:
+            current_tile = self.grid[y][x]
+            if (current_tile.kind == 'grass'):
+                pygame.mouse.set_visible(False)
+                self.typer = Typer(self.basic_tower_d,'tower',2,y,x)
+                self.typing_timer = -1
+        elif typer_type == 'rapid' and self.res >= 300:
+            current_tile = self.grid[y][x]
+            if (current_tile.kind == 'tower' and current_tile.title == 'Basic Tower'):
+                pygame.mouse.set_visible(False)
+                self.typer = Typer(self.adv_tower_d,'rapid',3,y,x)
+                self.typing_timer = -1
+        elif typer_type == 'snipe' and self.res >= 500:
+            current_tile = self.grid[y][x]
+            if (current_tile.kind == 'tower' and current_tile.title == 'Basic Tower'):
+                pygame.mouse.set_visible(False)
+                self.typer = Typer(self.adv_tower_d,'snipe',3,y,x)
+                self.typing_timer = -1
+        elif typer_type == 'dam' and self.res >= 50:
+            current_tile = self.grid[y][x]
+            if (current_tile.kind == 'road'):
+                pygame.mouse.set_visible(False)
+                self.typer = Typer(self.upgrade_d,'dam',1,y,x)
+                self.typing_timer = -1
+        
         
 
 
