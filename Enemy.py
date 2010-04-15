@@ -124,7 +124,7 @@ class Enemy(object):
                     self.next_tile = self.path[self.path_num+1]
                 self.pixel_moved = 0.0
             
-            
+            #only scarabs have north and south images    
             if self.tile.dir == 'north':
                 self.loc = ((self.tile.loc[1]+1)*30, self.tile.loc[0]*30+15-self.pixel_moved)
                 if self.type == 'scarab':

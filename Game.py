@@ -113,7 +113,7 @@ class Game(object):
             self.grid = self.the_map.get_grid()
             self.towers = self.the_map.towers
             self.enemies = dict()
-            self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.level)
+            self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.enemy_wave_description)
 
             #reset all main variables
             self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
