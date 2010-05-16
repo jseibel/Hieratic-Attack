@@ -23,6 +23,11 @@ class Display(object):
     def print_sidebar(self,text, y_height):
         self.background.blit(self.font.render(text,True,(255,255,255)), (616,y_height))
 
+    def DrawRadial(self,x,y,choice_list):
+        for selection in choice_list:
+            self.
+        
+
     #redraw the screen
     def update_view(self,game_data,controller):
         if game_data.game_state == 'main':

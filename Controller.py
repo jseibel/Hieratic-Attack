@@ -5,12 +5,15 @@ import pygame
 from pygame.locals import *
 from sys import exit
 from Typer import Typer
+from RadialMenu import RadialMenu
 
 class Controller(object):
 
     def __init__(self):
         self.curr_x = 0
         self.curr_y = 0
+        self.menu_loc = (0,0)
+        self.radial = new RadialMenu()
     
     
     def handle(self,event,game_data):
@@ -18,6 +21,7 @@ class Controller(object):
             exit()
 
         if game_data.game_state == 'main':
+
             #update current tile based on mouse or keyboard
             if event.type == MOUSEMOTION:
                 new_loc = pygame.mouse.get_pos()
@@ -26,6 +30,15 @@ class Controller(object):
                     self.curr_x = (new_loc[0]-15)/30
                     self.curr_y = (new_loc[1])/30
                     
+            if event.type == MOUSEBUTTONDOWN:
+                radial_center = pygame.mouse.get_pos()
+                radial_center[0] = (self.curr_x) * 30 + 15
+                self.radial.NewMenu(game_data.grid[self.curr_y][self.curr_x],pygame.mouse.get_pos())
+                
+            if event.type == MOUSEBUTTONUP:
+                selection = self.radial.GetChoice(pygame.mouse.get_pos())
+                if selection
+
             #relay keyboard input to typer if active
             if game_data.typer.active:
                 if event.type == KEYDOWN:
