@@ -1,0 +1,223 @@
+Hieratic Attack Game Description
+John Seibel
+May 2009 
+Johns Hopkins University
+
+
+Introduction:
+    Hieratic Attack was originally written for Peter Frohlich's Introduction
+to Video Game Design in the Spring of 2009.  It was programmed by John Seibel
+with music by Amit Routh and art by Alena Geffner-Mihlsten.  This explanation
+will focus on the programming decisions made in the development as well as some
+overall structure of the program so that others can hopefully follow and learn
+something from it.
+    Hieratic Attack is written entirely in Python using the Pygame multimedia
+library (http://www.pygame.org/).  Needless to say you must have both Python
+and Pygame installed to run.
+
+
+
+Structure of the game:
+   First, an definition of game play.  Hieratic Attack is a tower-defense game
+where actions rely on the user's ability to type out randomly generated word(s)
+quickly and accurately.  Each level in Hieratic Attack consists of a 20x20 
+grid of tiles.  There is a track where enemies at one end and move along the 
+path towards the end.  Towers are created by the player to shoot at the enemies
+with the goal of killing them before they can reach the end of the track.
+Enemies spawn in groups (Waves) of increasing difficulty to kill and each level
+is complete once a specified number of waves are cleared.  A player starts
+with a small amount of resources and must use them to build towers.  As enemies
+are successfully killed, more resources are allotted to the player to build up
+their defenses to kill the stronger enemies to follow.
+
+Typing Mechanics:
+    One of the main features of Hieratic Attack is its typing based system
+for building and upgrading towers.  Once a player chooses to build or 
+upgrade a tower, the game generates words of a variable length.  As levels
+progress, the words become more numerous and increase in length.  The user
+must type the string correctly to complete the action and the resulting
+outcome is based on the time it took the player to finish as well as the
+number of incorrect keys typed.
+
+Typer.py:
+    The Typer class is used to facilitate the typing game play elements.  The
+typer stores information for display (font, color, screen location) as well
+as the actual words that need to be typed.  It also stores the type of object
+it is being used to upgrade.  It is passed the word length and number of
+words to be typed.  All the words are taken from the online Scrabble
+dictionary and are stored by word length in the DICT folder.  The .dict files
+store each word on a line and the get_word() function generates a random
+integer from 0 to maximum line number.  The put() function takes a character
+in and determines if it is the next character in the string.  If so it is 
+added to the string of correctly typed characters and if not it increments
+the wrong variable.  put() calls complete() which determines if the word is
+finished.  If complete, the typer is killed and returns true.  This signal
+is received by the game class and will be discussed later.
+
+
+Tile-Based Map System:
+    The map is a 20x20 grid of tiles.  The Tile class is the base class and
+is extended by Grass, Road, EnemyBase, HomeBase, and Tower.  A Tile is aware
+of its kind, location on the map, and the image file for its graphical
+representation.  Grass tiles are basically empty tiles where towers can be
+built.  EnemyBase and HomeBase tiles serve as the beginning and end point of
+the path the enemies follow.  Connecting them are Road tiles, which store the
+direction of the previous tile and the next tile.  This information is used to
+move enemies in the correct direction as well as determining the correct image
+to use for display.  The maps are generated from text files (found in the MAP
+directory).  A description of how to build a map can be found at the bottom of
+each .map file.
+
+Tower.py:
+    Towers are the attacking class of the game.  Each has a set of stats that
+are created and advanced by completing Typer challenges.  Towers' main stats
+are damage (how much enemy HP they remove), range (how far they can shoot), 
+and rate (how often that can shoot).  Towers also keep track of the total 
+amount of damage they have dealt over their time.  fire() takes an enemy,
+subtracts the tower's damage from its hp, and sets the tower to cool down.
+tick() takes the time passed since the last tick, updates the cooldown of the
+tower, and changes the tower picture based on the cooldown.  The tower's
+animation is based on its cooldown; the brightness of the tower's image is
+reflected through the cool time.  The get_info() function is used for
+gathering the tower's stats in string form for use in displaying.
+    When a tower is built, it is initially a 'Basic' tower.  A tower can be
+upgraded regularly, which upgrades each stat a little.  It can also be updated
+to two other types of towers.  A rapid tower does less damage but fires at a
+very high rate.  A sniper tower has a big range and high damage, but trades off
+for a low rate of fire.
+
+Field.py:
+   Field is the object that actually builds and maintains the map.  It reads
+the .map file and parses the text into tiles which it stores in a 20x20 dict.
+The Field is also responsible for tracking and updating the Towers and Dams
+that have been created by the player.  It contains a list of the Road tiles
+in order called the path which Enemy objects rely on to move correctly through
+the track.  It also tracks its own visual surface. 
+
+Enemy.py:
+   The Enemy class tracks the stats for an individual enemy.  It tracks its
+current location as well as what level it is generated in.  Its hp and speed
+are functions of its own level as well as the level it is spawned into, but
+the current implementation is suboptimal as these values are hard-coded into
+the enemy object constructor.  A better implementation would load that
+information from some form of definition file and pull it out of the class
+definition.  The enemy tracks its own pixel center which is necessary for
+distance calculations for towers firing at it as well as location for drawing
+on the screes.  The move() function takes into account the direction the Enemy
+is moving as well as its speed to move it along the path and update its visual
+representation as necessary.
+
+
+Game.py:
+    The Game object is used to track the current game state.  It records a
+large number of variables required for running the game.  It creates and stores
+the Field, Enemies, Typer as well as preloading many of the level-specific
+images for quick access.  It has a function for loading a level which resets
+many of its variables and reads a level definition out of a .level file.  The
+Game object also tracks its 'state' which is very important to the Controller
+and Display classes.
+    The Update() function runs much of game.  It takes the time passed since
+its last call as an argument and uses that to move enemies, send new enemy
+waves, tick towers and dams, and fire available towers at enemies.  It is also
+responsible for determining when a player has completed or failed a level as
+well as when the game is over.  The Game class also has methods for handling
+Typer activation and updating upon completion.
+
+Controller.py:
+    The Controller class handles all player input.  It bases allowed input off
+the Game's state.  The Controller handles both mouse and keyboard input for 
+movement of the cursor, which translates to the focused tile on the grid.
+There are keys to build and upgrade towers, activating Typer tasks for the 
+player.  If a Typer is already active, KEYDOWN events are sent to the Typer
+instead of their usual action and therefore a player cannot execute any action
+until they either complete or exit the Typer.  One important thing to note is
+that the QUIT event.type must always be handled in a pygame event loop as it
+is necessary for exiting the program when the window is closed.  This would
+be very frustrating for a player if it was ever not handled in a particular
+game state.
+
+WaveMeter.py:
+    The WaveMeter is a visual cue for the player to anticipate when the next
+wave will be sent.  It is a vertical line with a small image of the enemy type
+contained in the wave.  The meter itself shows the next 60 seconds of waves. 
+
+Display.py:
+    The Display class updates all the graphics for the game and draws them to a
+single surface for blitting to the screen.  The screen itself can be broken
+down into three sections.  The WaveMeter is drawn on the left side, followed by
+the Field in the center, and the sidebar on the right side.  Over the Field, a
+white square is drawn to show the player the focused tile.  When the focused
+tile is a Tower, the display also retrieves the Tower's stat printout string
+and draws it to the sidebar as well as drawing a thin yellow circle on the 
+Field to show the Tower's range of fire.  Display also iterates over the Enemy
+list from Game and draws all living enemies.  Lastly, if there is an active
+Typer the game draws the text box over all other images.  When not in the main
+game state, the screen is a static image, though the start menu has a nice
+animation effect where two similar images are switched back and forth to 
+simulate a flashing 'Start'.
+    One design decision made in the display is that every object's visual 
+representation is a pygame.surface object.  This ignores the pygame.sprite 
+object that would also be able to display an image as well as have built-in 
+support for collision detection with other sprites.  Because there are no 
+collisions in Hieratic Attack there was no need to use sprites but in many 
+other games they can greatly simplify the implementation.
+
+main.py:
+    This is the main driver for the game.  Pygame is initialized, the screen
+resolution is set to 800x600, and the mixer is initialized (for playing sound).
+The heavy lifting of the game is done by the Display, Game, and Controller 
+classes, designed with the Model View Controller (MVC) paradigm in mind.
+Note the clock object: it exists in the main game loop and is used to restrict
+frames per second and allow animations to be time-based.  Without it, the 
+game would render screens at a speed based on the machine running the game.
+The last portion fo the file is the main game loop, which repeats indefinitely.
+First, pygame input (pygame.event) is passed to the Controller for processing.
+Then, the Game object is updated.  Finally, the Display is updated and 
+pygame.display.flip() is called to reflect the changes on the screen.
+
+Lessons Learned:
+  Varying Resolution:
+    The images used in Hieratic Attack were designed with the 800x600 screen
+    size as a set value.  This design completely eliminated the possibility
+    of allowing different screen resolutions to be selected by the player.
+    If the images were higher resolution, they could be scaled down to look
+    fine on a smaller screen but the small images look ugly when blown up to
+    a higher resolution.  Even with larger art though, much of the visual
+    portions fo the game would have to be rewritten if the resolution is to 
+    be variable.  Much of the Display relies on hard-coded pixel locations for
+    each object which would all have to be changed to scale to the set
+    resolution.
+
+
+  Balancing Issues:
+    The relation between typing speed/accuracy and the resulting tower bonuses
+    was very difficult to determine.  The game needs to be entertaining for 
+    both experienced typists as well as the not so speedy, and in particular
+    the rewards for completion time had to be tweaked a number of times.
+    Initially, the reward was based linearly on time, but the scale became
+    too problematic as very quick typers would make incredibly powerful towers
+    and very slow typers produced towers that were almost completely useless.
+    The current implementation puts a minimum and maximum cap on the resulting
+    stats, which makes the balance easier to control from a designer's standpoint
+    while taking a some variation away from the player's experience.  In the
+    end, this makes for a more entertaining game as the player cannot make
+    towers that are too powerful or too weak.
+
+  Testing:
+    While this is repeated over and over by many people in Peter's class, 
+    proper time to test the game is a necessity.  Not only can bugs be found,
+    but in the the case of Hieratic Attack many issues in balance led to a
+    game that ran well, but just wasn't very much fun.  While coding always
+    seems to be done at the last minute, it is advisable to leave at least a
+    little time near the end of the development cycle to actually get your 
+    game into the hands of players and see what they experience coming into
+    your game for the first time.  They often have many issues you never 
+    anticipated because you created it and take information for granted.
+
+
+
+
+
+
+
+

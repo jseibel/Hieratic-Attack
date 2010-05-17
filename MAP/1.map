@@ -19,3 +19,15 @@ G G G G G H W W W G G G N W W W W W G G
 G G G G G G G G G G G G G G G G G G G G
 G G G G G G G G G G G G G G G G G G G G
 
+
+G - grass
+N - road to north
+S - road to south
+E - road to east
+W - road to west
+T - tower
+H - home base
+A - enemy base to north
+B - enemy base to south
+C - enemy base to east
+D - enemy base to west

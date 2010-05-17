@@ -1,6 +1,5 @@
 import pygame
 from pygame.locals import *
-import random
 from math import fabs
 
 
@@ -51,9 +50,9 @@ class Tower(object):
     def skill_modifier(self,wrong,time):
         self.rate = (time/2)-.75
         self.damage = 10-wrong
-        self.range = int(self.range/self.rate)
         if self.rate < .75:
             self.rate = .75
+        self.range = int(self.range/self.rate)
         if self.rate > 1.5:
             self.rate = 1.5
         if self.range > 120:
@@ -64,21 +63,14 @@ class Tower(object):
             self.damage = 5
         
     
-    #basic firing at enemy, takes the enemy as argument, no armor calculation yet
-    def fire(self,enemy,enemy_list,index):
+    #basic firing at enemy
+    def fire(self,enemy):
     
         #enemy loses HP equal to weapon damage
         enemy.hp-= self.damage
         self.totaldmg+= self.damage
-        
-        #if 
-        
-        #makes enemy red over time
-        #enemy.pic.fill((255,255*(enemy.hp/enemy.totalhp),255*(enemy.hp/enemy.totalhp)))
         #sets cooldown counter
         self.cool = self.rate
-        #turns tower tile black to show on cooldown
-        self.pic.fill((0,0,0))
         
     #lowers cooldown counter, slowly fades tower back into color
     def tick(self, time):
@@ -129,7 +121,6 @@ class Tower(object):
                 self.pic = self.pic = pygame.image.load('IMG/sand.png').convert()
                 self.pic.blit(self.snipe_100,(0,0))
         
-        #self.pic.fill((125*(fabs(self.rate-self.cool)/self.rate), 75*(fabs(self.rate-self.cool)/self.rate), 0))
         
     
     #returns a list of information about tower for display in game
@@ -144,23 +135,8 @@ class Tower(object):
         out.append('Damage done: ' + str(self.totaldmg))
         
         return out
-        '''
-    #upgrade the tower, random
-    def upgrade(self):
-        roll = random.randint(1,10)
-        if roll <= 3:
-            self.range += 5
-        elif roll <= 6:
-            self.rate *= .85
-        elif roll <= 9: 
-            self.damage+= 3
-        elif roll == 10:
-            self.damage += 5
-            self.rate   *= .9
-            self.range  += 3
-        self.upgrades+= 1
-        #self.title = 'Tower level : ' + str(self.upgrades)
-        '''
+
+
     def upgrade(self,wrong,time):
         if wrong < 3:
             self.range += 10-(wrong*5)
@@ -168,7 +144,6 @@ class Tower(object):
             self.rate *= .9
         if wrong == 0 and time < 1.5:
             self.damage+= 3
-        
         
         self.upgrades+= 1
         
@@ -199,11 +174,6 @@ class Tower(object):
         
         if self.rate > 7.5:
             self.rate = 7.5
-        
-        
-        
-        
-        
         
         
         

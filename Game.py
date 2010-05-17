@@ -1,4 +1,4 @@
-#Game class serves as the data model got the game back-end
+#Game class serves as the data model for the game back-end
 
 import pygame
 from pygame.locals import *
@@ -113,8 +113,8 @@ class Game(object):
             self.grid = self.the_map.get_grid()
             self.towers = self.the_map.towers
             self.enemies = dict()
-            self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.enemy_wave_description)
 
+            self.meter = WaveMeter(self.wave_max,(self.wave_time/40),(self.first_wave_time/40),self.enemy_wave_description)
             #reset all main variables
             self.current_level = pygame.image.load('IMG/level_' + str(self.level) + '_100.png').convert_alpha() 
             self.frame = 0
@@ -159,7 +159,7 @@ class Game(object):
                     self.enemies[j].move(self.time)
                     for i in self.towers:
                         if dist(self.towers[i].center,self.enemies[j].loc) <= self.towers[i].range and self.towers[i].cool <= 0:
-                            self.towers[i].fire(self.enemies[j],self.enemies,j)
+                            self.towers[i].fire(self.enemies[j])
                             if self.enemies[j].hp <= 0:
                                 self.enemies[j].alive = False
                                 self.res+= self.enemies[j].reward

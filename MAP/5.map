@@ -1,20 +1,33 @@
+G G G G G G G G G G G G G G G G G G G G
+G G G G G G G G G C E E E E E E S G G G
+G G G G G G G G G G G G G G G G S G G G
+G G G G G G G G G G G G G G G G S G G G
+G G G G G G G G G G G G G G G G S G G G
+G G S W W W W W W W W W W W W W W G G G
+G G S G G G G G G G G G G G G G G G G G
+G G S G G G G G G G G G G G G G G G G G
+G G S G G G G G G G G G G G G G G G G G
+G G S G G G G G G E E E E S G G G G G G
+G G S G G G G G G N G G G S G G G G G G
+G G S G G G G G G N G G G S G G G H G G
+G G S G G G G G G N G G G S G G G N G G
+G G S G G G G G G N G G G S G G G N G G
+G G E E E E E E E N G G G E E E E N G G
+G G G G G G G G G G G G G G G G G G G G
+G G G G G G G G G G G G G G G G G G G G
+G G G G G G G G G G G G G G G G G G G G
+G G G G G G G G G G G G G G G G G G G G
 G G G G G G G G G G G G G G G G G G G G 
-G G G G G G G G G C E E E E E E S G G G 
-G G G G G G G G G G G G G G G G S G G G 
-G G G G G G G G G G G G G G G G S G G G 
-G G G G G G G G G G G G G G G G S G G G 
-G G S W W W W W W W W W W W W W W G G G 
-G G S G G G G G G G G G G G G G G G G G 
-G G S G G G G G G G G G G G G G G G G G 
-G G S G G G G G G G G G G G G G G G G G 
-G G S G G G G G G E E E E S G G G G G G 
-G G S G G G G G G N G G G S G G G G G G 
-G G S G G G G G G N G G G S G G G H G G 
-G G S G G G G G G N G G G S G G G N G G 
-G G S G G G G G G N G G G S G G G N G G 
-G G E E E E E E E N G G G E E E E N G G 
-G G G G G G G G G G G G G G G G G G G G 
-G G G G G G G G G G G G G G G G G G G G 
-G G G G G G G G G G G G G G G G G G G G 
-G G G G G G G G G G G G G G G G G G G G 
-G G G G G G G G G G G G G G G G G G G G 
+
+
+G - grass
+N - road to north
+S - road to south
+E - road to east
+W - road to west
+T - tower
+H - home base
+A - enemy base to north
+B - enemy base to south
+C - enemy base to east
+D - enemy base to west

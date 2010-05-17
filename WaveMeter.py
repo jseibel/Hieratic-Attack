@@ -20,14 +20,15 @@ class WaveMeter(object):
         self.wave_descriptions = wave_descriptions
     
     #returns visual of the wave meter for display
-    def getMeter(self,time_change,current_wave):
+    def getMeter(self,time_change):
         self.elapsed_time += time_change
         meter = pygame.Surface((15,600)) 
         meter.blit(self.background,(0,0))
         
         i = 0
         while (i < self.waves):
-            wave_time = self.first + (self.between * i)
+            #wave_time = self.first + (self.between * i)
+            wave_time = (self.between * i)
             if (wave_time > self.elapsed_time) and (wave_time < self.elapsed_time + 60.0):
                 y_loc = (600*(wave_time - self.elapsed_time) / 60.0)
                 img = pygame.image.load('IMG/'+self.wave_descriptions[i]+'_meter.png').convert_alpha()

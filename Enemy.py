@@ -28,7 +28,6 @@ class Enemy(object):
         self.world = world_level
 
         #enemy defined by level 
-        #TODO - move enemy stat definition into level resource
         if self.world == 1:
             self.hp = (level+1) * 5.0
                   

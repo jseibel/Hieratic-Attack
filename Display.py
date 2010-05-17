@@ -34,7 +34,7 @@ class Display(object):
             #get the newest map
             map_surface = game_data.the_map.get_map().convert()
             self.background.blit(map_surface, (15,0))
-            meter_surface = game_data.meter.getMeter(game_data.time,game_data.enemy_level)
+            meter_surface = game_data.meter.getMeter(game_data.time)
             self.background.blit(meter_surface,(0,0))
             curr_tile = game_data.grid[controller.curr_y][controller.curr_x]
             #draws a rectangle around current tile
