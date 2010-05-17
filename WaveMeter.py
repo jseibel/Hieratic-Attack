@@ -15,8 +15,19 @@ class WaveMeter(object):
         self.waves = waves
         #time between waves
         self.between = between
+        #load all possible monster images
+        self.scarab = pygame.image.load('IMG/scarab_meter.png').convert_alpha()
+        self.falcon = pygame.image.load('IMG/falcon_meter.png').convert_alpha()
+        self.wasp = pygame.image.load('IMG/wasp_meter.png').convert_alpha()
+        self.eagle = pygame.image.load('IMG/eagle_meter.png').convert_alpha()
+        self.mummy = pygame.image.load('IMG/mummy_meter.png').convert_alpha()
+        self.anubis = pygame.image.load('IMG/anubis_meter.png').convert_alpha()
+        self.lion = pygame.image.load('IMG/lion_meter.png').convert_alpha()
+
+        self.current_wave = 0
         self.elapsed_time = 0.0
         self.first = first_wave_time
+        self.current_enemy = Enemy
         self.wave_descriptions = wave_descriptions
     
     #returns visual of the wave meter for display
