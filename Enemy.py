@@ -6,7 +6,7 @@ from pygame.locals import *
 class Enemy(object):
 
     #takes path from map as constructor
-    def __init__(self,level,path,world_level):
+    def __init__(self,enemy_type,level,path,world_level):
         
         self.path = path
         #starts at enemy base
@@ -18,7 +18,8 @@ class Enemy(object):
         self.loc = ((self.tile.loc[1]+1)*30, self.tile.loc[0]*30+15)
         #movement speed of enemy in pixels/second
         self.speed = 50
-        self.pic = None
+        self.type = enemy_type
+        self.pic = pygame.image.load( ('IMG/' + self.type + '_east.png') ).convert_alpha()
         #tracks dist moved in actual pixels
         self.pixel_moved = 0.0
         self.alive = True
@@ -27,98 +28,76 @@ class Enemy(object):
         self.world = world_level
 
         #enemy defined by level 
-        #TODO - move enemy stat definition into level resource
         if self.world == 1:
             self.hp = (level+1) * 5.0
-            self.pic = pygame.image.load('IMG/scarab_south.png').convert_alpha() 
                   
         elif self.world == 2:
             if self.level < 10:
                 self.hp = (level+1) * 5.0
-                self.pic = pygame.image.load('IMG/scarab_south.png').convert_alpha()
             else:
                 self.hp = 50 + ((self.level-9) * 8.0)
-                self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
                 self.speed = 60
                       
         elif self.world == 3:
             if self.level < 10:
                 self.hp = (self.level+1)*8.0
-                self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
                 self.speed = 60
             else:
                 self.hp = 80 + ((self.level-9) * 10.0)
-                self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
                 
         elif self.world == 4:
             if self.level < 5:
                 self.hp = (self.level+1)*8.0
-                self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
                 self.speed = 60
             elif self.level < 10:
                 self.hp = 80 + ((self.level-4) * 10.0)
-                self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
                 self.speed = 60
             elif self.level < 15:
                 self.hp = 120 + ((self.level-9) * 15.0)
-                self.pic = pygame.image.load('IMG/eagle.png').convert_alpha()
             elif self.level == 15:
                 self.hp = 1000
-                self.pic = pygame.image.load('IMG/lion_west.png').convert_alpha()
                 self.speed = 40
             
         
         elif self.world == 5:
             if self.level < 10:
                 self.hp = (self.level+1)*8.0
-                self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
                 self.speed = 60
             else:
                 self.hp = 80 + ((self.level-9) * 10.0)
-                self.pic = pygame.image.load('IMG/eagle.png').convert_alpha()
                 
                 
         elif self.world == 6:
             if self.level < 5:
                 self.hp = (self.level+1)*8.0
-                self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
                 self.speed = 60
             elif self.level < 10:
                 self.hp = 40 + ((self.level-4) * 15.0)
-                self.pic = pygame.image.load('IMG/eagles_west.png').convert_alpha()
             else:
                 self.hp = 90 + ((self.level-9) * 18.0)
-                self.pic = pygame.image.load('IMG/mummy_west.png').convert_alpha()
                 
         elif self.world == 7:
             self.hp = 1000
-            self.pic = pygame.image.load('IMG/lion_west.png').convert_alpha()
             
                 
         elif self.world == 8:
             if self.level < 5:
                 self.hp = (self.level+1)*8.0
-                self.pic = pygame.image.load('IMG/scarab_west.png').convert_alpha()
                 self.speed = 50
             elif self.level < 10:
                 self.hp = 40 + ((self.level-4) * 8.0)
-                self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
                 self.speed = 60
             elif self.level < 15:
                 self.hp = 80 + ((self.level-9) * 10.0)
-                self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
                 self.speed = 60
             elif self.level < 20:
                 self.hp = 130+((self.level-14) * 12.0)
-                self.pic = pygame.image.load('IMG/eagle.png').convert_alpha()
                 self.speed = 50
             elif self.level < 25:
                 self.hp = 190+((self.level-14) * 10.0)
-                self.pic = pygame.image.load('IMG/mummy_west.png').convert_alpha()
                 self.speed = 50
             else:
                 self.hp = 1000
-                self.pic = pygame.image.load('IMG/anubis_west.png').convert_alpha()
                 self.speed = 40
                     
         
@@ -144,127 +123,26 @@ class Enemy(object):
                     self.next_tile = self.path[self.path_num+1]
                 self.pixel_moved = 0.0
             
-            
+            #only scarabs have north and south images    
             if self.tile.dir == 'north':
                 self.loc = ((self.tile.loc[1]+1)*30, self.tile.loc[0]*30+15-self.pixel_moved)
-                if self.world == 1:
+                if self.type == 'scarab':
                     self.pic = pygame.image.load('IMG/scarab_north.png').convert_alpha()
-                elif self.world == 2:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/scarab_north.png').convert_alpha()
-                elif self.level == 8:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/scarab_north.png').convert_alpha()
                     
         
             elif self.tile.dir == 'south':
                 self.loc = ((self.tile.loc[1]+1)*30, self.tile.loc[0]*30+15+self.pixel_moved)
-                if self.world == 1:
+                if self.type == 'scarab':
                     self.pic = pygame.image.load('IMG/scarab_south.png').convert_alpha()
-                elif self.world == 2:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/scarab_south.png').convert_alpha()
-                elif self.level == 8:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/scarab_south.png').convert_alpha()
+                
         
             elif self.tile.dir == 'east':
                 self.loc = ((self.tile.loc[1]+1)*30+self.pixel_moved, self.tile.loc[0]*30+15)
-                if self.world == 1:
-                    self.pic = pygame.image.load('IMG/scarab_east.png').convert_alpha()
-                elif self.world == 2:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/scarab_east.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/wasp_east.png').convert_alpha()
-                elif self.world == 3:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_east.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/falcon_east.png').convert_alpha()
-                elif self.world == 4:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/wasp_east.png').convert_alpha()
-                    elif self.level < 10:
-                        self.pic = pygame.image.load('IMG/falcon_east.png').convert_alpha()
-                    elif self.level < 15:
-                        self.pic = pygame.image.load('IMG/eagle.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/lion_east.png').convert_alpha()
-                elif self.world == 5:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_east.png').convert_alpha()
-                elif self.world == 6:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/falcon_east.png').convert_alpha()
-                    elif self.level < 10:
-                        None
-                    else:
-                        self.pic = pygame.image.load('IMG/mummy_east.png').convert_alpha()
-                elif self.world == 7:
-                    self.pic = pygame.image.load('IMG/lion_east.png').convert_alpha()
-                elif self.world == 8:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/scarab_east.png').convert_alpha()
-                    elif self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_east.png').convert_alpha()
-                    elif self.level < 15:
-                        self.pic = pygame.image.load('IMG/falcon_east.png').convert_alpha()
-                    elif self.level < 20:
-                        None
-                    elif self.level < 25:
-                        self.pic = pygame.image.load('IMG/mummy_east.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/anubis_east.png').convert_alpha()
+                self.pic = pygame.image.load('IMG/'+self.type+'_east.png').convert_alpha()
             
             elif self.tile.dir == 'west':
                 self.loc = ((self.tile.loc[1]+1)*30-self.pixel_moved, self.tile.loc[0]*30+15)
-                if self.world == 1:
-                    self.pic = pygame.image.load('IMG/scarab_west.png').convert_alpha()
-                elif self.world == 2:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/scarab_west.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
-                elif self.world == 3:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
-                elif self.world == 4:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
-                    elif self.level < 10:
-                        self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
-                    elif self.level < 15:
-                        self.pic = pygame.image.load('IMG/eagle.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/lion_west.png').convert_alpha()
-                elif self.world == 5:
-                    if self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
-                elif self.world == 6:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
-                    elif self.level < 10:
-                        None
-                    else:
-                        self.pic = pygame.image.load('IMG/mummy_west.png').convert_alpha()
-                elif self.world == 7:
-                    self.pic = pygame.image.load('IMG/lion_west.png').convert_alpha()
-                elif self.world == 8:
-                    if self.level < 5:
-                        self.pic = pygame.image.load('IMG/scarab_west.png').convert_alpha()
-                    elif self.level < 10:
-                        self.pic = pygame.image.load('IMG/wasp_west.png').convert_alpha()
-                    elif self.level < 15:
-                        self.pic = pygame.image.load('IMG/falcon_west.png').convert_alpha()
-                    elif self.level < 20:
-                        None
-                    elif self.level < 25:
-                        self.pic = pygame.image.load('IMG/mummy_west.png').convert_alpha()
-                    else:
-                        self.pic = pygame.image.load('IMG/anubis_west.png').convert_alpha()
+                self.pic = pygame.image.load('IMG/'+self.type+'_west.png').convert_alpha()
         
     
     #returns coordinates for drawing to screen based on center
